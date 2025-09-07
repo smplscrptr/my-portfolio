@@ -1,0 +1,44 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<header class="py-6">
+  <div class="flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 text-lg font-semibold hover:opacity-90 focus:outline-none focus:ring">
+      <img src="/favicon.svg" alt="" class="h-7 w-7" />
+      <span>Bennett Woods</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav aria-label="Primary" class="hidden md:block">
+      <ul class="flex items-center gap-4">
+        <li><a class="rounded-lg px-2 py-1 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#home">Home</a></li>
+        <li><a class="rounded-lg px-2 py-1 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#skills">Skills</a></li>
+        <li><a class="rounded-lg px-2 py-1 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#projects">Projects</a></li>
+        <li><a class="rounded-lg px-2 py-1 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#contact">Contact</a></li>
+        <li><ThemeToggle /></li>
+      </ul>
+    </nav>
+
+    <!-- Mobile nav -->
+    <details class="md:hidden relative">
+      <summary
+        class="list-none rounded-xl border border-muted/30 px-3 py-2 text-sm hover:bg-brand/10 focus:outline-none focus:ring cursor-pointer"
+        aria-label="Open menu"
+      >
+        ☰ Menu
+      </summary>
+      <div class="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-muted/20 bg-bg p-2 shadow-lg">
+        <nav aria-label="Primary mobile">
+          <ul class="flex flex-col gap-1">
+            <li><a class="block rounded-lg px-3 py-2 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#home">Home</a></li>
+            <li><a class="block rounded-lg px-3 py-2 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#skills">Skills</a></li>
+            <li><a class="block rounded-lg px-3 py-2 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#projects">Projects</a></li>
+            <li><a class="block rounded-lg px-3 py-2 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#contact">Contact</a></li>
+            <li class="px-3 py-2"><ThemeToggle /></li>
+          </ul>
+        </nav>
+      </div>
+    </details>
+  </div>
+</header>

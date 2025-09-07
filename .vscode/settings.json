@@ -1,0 +1,9 @@
+{
+  "esling.validate": [
+    "javascript",
+    "javascriptreact",
+    "astro",
+    "typescript",
+    "typescriptreact"
+  ]
+}

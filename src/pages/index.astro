@@ -1,11 +1,153 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Base from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+type ProjectEntry = CollectionEntry<"projects">;
+const allProjects: ProjectEntry[] = await getCollection("projects");
+const byOrder = (a: ProjectEntry, b: ProjectEntry) =>
+  (a.data.order ?? 999) - (b.data.order ?? 999);
+const featured: ProjectEntry[] = allProjects
+  .filter((p) => p.data.featured)
+  .sort(byOrder)
+  .slice(0, 4);
+
+const tagColors: Record<string, string> = {
+  Python: "bg-emerald-500/15 text-emerald-300 border-emerald-700/40",
+  Tableau: "bg-indigo-500/15 text-indigo-300 border-indigo-700/40",
+  EDA: "bg-amber-500/15 text-amber-300 border-amber-700/40",
+  ARIMA: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-700/40",
+  "Time Series": "bg-cyan-500/15 text-cyan-300 border-cyan-700/40",
+  Pandas: "bg-sky-500/15 text-sky-300 border-sky-700/40"
+};
+const colorFor = (t: string) =>
+  tagColors[t] ?? "bg-slate-500/15 text-slate-300 border-slate-700/40";
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<Base title="Home" description="Portfolio of Bennett Woods — data analysis projects, skills, and contact.">
+  <Fragment slot="header"><Header /></Fragment>
+
+  <!-- HOME / HERO -->
+  <section id="home" class="grid gap-12 py-16 md:grid-cols-2">
+    <div class="flex flex-col justify-center gap-5 reveal">
+      <h1 class="text-4xl md:text-6xl font-bold tracking-tight">
+        Data Analyst • Engineer • Developer
+      </h1>
+      <p class="text-lg text-gray-600">
+        Utilizing user stories, data and testing to weave customer needs into actionable business insights.<br>
+        Develop strategies to clean, prepare and model data using ML and AI tools.
+      </p>
+      <div class="flex gap-3">
+        <a href="#projects" class="rounded-2xl border border-gray-300 text-white px-4 py-2 hover:bg-blue-500 focus:outline-none focus:ring">View Projects</a>
+        <a href="#contact" class="rounded-2xl border border-gray-300 px-4 py-2 hover:bg-blue-500 focus:outline-none focus:ring">Contact</a>
+      </div>
+    </div>
+    <div class="reveal">
+      <!-- Simple animated "bar chart" -->
+      <div class="hero-dots">
+        {Array.from({ length: 60 }).map(() => <span />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="py-16 reveal">
+    <h2 class="mb-6 text-3xl font-bold">Skills & Abilities</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <article class="rounded-2xl border border-gray-800/60 bg-white/5 p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-x1 hover:shadow/black/30">
+        <h3 class="font-semibold mb-1">Python & Data</h3>
+        <p class="text-sm text-gray-300">Pandas, NumPy, scikit-learn, statsmodels, notebooks, Machine Learning and tuning, ETL.</p>
+      </article>
+      <article class="rounded-2xl border border-gray-800/60 bg-white/5 p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-x1 hover:shadow/black/30">
+        <h3 class="font-semibold mb-1">SQL & Warehousing</h3>
+        <p class="text-sm text-gray-300">Modeling, queries and query development, performance, Postgres/SQLite, reporting.</p>
+      </article>
+      <article class="rounded-2xl border border-gray-800/60 bg-white/5 p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-x1 hover:shadow/black/30">
+        <h3 class="font-semibold mb-1">Visualization</h3>
+        <p class="text-sm text-gray-300">Tableau, InDesign, Figma, clear story design, accessibility and interaction.</p>
+      </article>
+      <article class="rounded-2xl border border-gray-800/60 bg-white/5 p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-x1 hover:shadow/black/30">
+        <h3 class="font-semibold mb-1">Forecasting</h3>
+        <p class="text-sm text-gray-300">ARIMA, cross-validation, RandomForest, linear regression, evaluation/diagnostics, baselines → ML.</p>
+      </article>
+      <article class="rounded-2xl border border-gray-800/60 bg-white/5 p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-x1 hover:shadow/black/30">
+        <h3 class="font-semibold mb-1">Quality & Ops</h3>
+        <p class="text-sm text-gray-300">Version control, Github, CI/CD, reproducibility, documentation, lint/format.</p>
+      </article>
+      <article class="rounded-2xl border border-gray-800/60 bg-white/5 p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-x1 hover:shadow/black/30">
+        <h3 class="font-semibold mb-1">Communication</h3>
+        <p class="text-sm text-gray-300">Executive summaries, detailed storytelling, stakeholder alignment, clear recommendations.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="py-16 reveal">
+    <h2 class="mb-6 text-3xl font-bold">Projects</h2>
+    <div class="grid gap-6 md:grid-cols-2">
+      {featured.map((p) => (
+        <article class="group rounded-2xl border border-gray-800/60 bg-white/5 p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30">
+          <header class="mb-2 flex items-center justify-between gap-2">
+            <h3 class="text-lg font-semibold">
+              <a href={`/projects/${p.slug}`} class="hover:underline focus:outline-none focus:ring">
+                {p.data.title}
+              </a>
+            </h3>
+            <span class="rounded-full border border-gray-800/60 px-2 py-0.5 text-xs text-gray-300">{p.data.year}</span>
+          </header>
+          <p class="mb-3 text-sm text-gray-300">{p.data.description}</p>
+          <ul class="mb-4 flex flex-wrap gap-2" aria-label="Tags">
+            {p.data.tags?.map((t) => (
+               <li class={'rounded-full border px-2 py-0.5 text-xs ${colorfor(t)}'}>{t}</li>
+            ))}
+          </ul>
+          <div class="flex gap-3">
+            {p.data.repo && <a class="text-sm underline decoration-dotted hover:decoration-solid focus:outline-none focus:ring" href={p.data.repo}>Repo</a>}
+            {p.data.demo && <a class="text-sm underline decoration-dotted hover:decoration-solid focus:outline-none focus:ring" href={p.data.demo}>Live</a>}
+            <a class="text-sm underline decoration-dotted hover:decoration-solid focus:outline-none focus:ring" href={`/projects/${p.slug}`}>Read more</a>
+          </div>
+        </article>
+      ))}
+    </div>
+    <p class="mt-6 text-sm">
+      <a class="underline decoration-dotted hover:decoration-solid focus:outline-none focus:ring" href="/projects">See all projects →</a>
+    </p>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="py-16 reveal">
+    <h2 class="mb-6 text-3xl font-bold">Contact</h2>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <a href="mailto:hirebennettwoods@gmail.com" class="rounded-2xl border border-gray-200 p-5 hover:bg-blue-500 focus:outline-none focus:ring">
+        📧 <span class="sr-only">Email</span> Email
+      </a>
+      <a href="https://github.com/smplscrptr" class="rounded-2xl border border-gray-200 p-5 hover:bg-blue-500 focus:outline-none focus:ring" rel="me noopener">
+        💻 GitHub
+      </a>
+      <a href="https://www.linkedin.com/in/bennett-woods-173782179/" class="rounded-2xl border border-gray-200 p-5 hover:bg-blue-500 focus:outline-none focus:ring">
+        🔗 LinkedIn
+      </a>
+      <a href="public/BWoods_Resume_Tech.docx" class="rounded-2xl border border-gray-200 p-5 hover:bg-blue-500 focus:outline-none focus:ring">
+        📄 Resume
+      </a>
+    </div>
+  </section>
+
+  <Fragment slot="footer"><Footer /></Fragment>
+</Base>
+
+<!-- Progressive enhancement: reveal-on-scroll -->
+<script>
+  const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) {
+    const els = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) e.target.classList.add('inview');
+    }, { threshold: 0.1 });
+    els.forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('inview'));
+  }
+</script>

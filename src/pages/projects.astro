@@ -1,0 +1,140 @@
+---
+import Base from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+const tagColors: Record<string, string> = {
+  Python:  "bg-emerald-500/15 text-emerald-300 border-emerald-700/40",
+  Tableau: "bg-indigo-500/15 text-indigo-300 border-indigo-700/40",
+  EDA:     "bg-amber-500/15 text-amber-300 border-amber-700/40",
+  ARIMA:   "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-700/40",
+  "Time Series": "bg-cyan-500/15 text-cyan-300 border-cyan-700/40",
+  Pandas:  "bg-sky-500/15 text-sky-300 border-sky-700/40"
+};
+const colorFor = (t: string) =>
+    tagColors[t] ?? "bg-sky-500/15 text-sky-300 border-sky-700/40";
+
+type ProjectEntry = CollectionEntry<"projects">;
+
+// 1) Load all projects
+const all: ProjectEntry[] = await getCollection("projects");
+
+// 2) Unique, sorted list of tags
+const tagSet = new Set<string>();
+for (const p of all) for (const t of p.data.tags ?? []) tagSet.add(t);
+const allTags = Array.from(tagSet).sort((a, b) => a.localeCompare(b));
+
+// 3) Read selected tags from the URL (?tags=Python,Tableau)
+const url = Astro.url;
+const selectedParam = url.searchParams.get("tags") ?? "";
+const selectedTags = selectedParam
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+// 4) Filter projects if tags are selected
+const byOrder = (a: ProjectEntry, b: ProjectEntry) =>
+  (a.data.order ?? 999) - (b.data.order ?? 999);
+
+const visible = all
+  .slice()
+  .sort(byOrder)
+  .filter((p) =>
+    selectedTags.length === 0
+      ? true
+      : (p.data.tags ?? []).some((t) => selectedTags.includes(t))
+  )
+  .map((p) => ({
+    slug: p.slug,
+    ...p.data,
+  }));
+
+// Helper to build a tags query string when toggling chips
+function toggleTag(tag: string) {
+  const set = new Set(selectedTags);
+  if (set.has(tag)) set.delete(tag);
+  else set.add(tag);
+  return Array.from(set).join(",");
+}
+
+// Precompute chip link hrefs
+const chipLinks = Object.fromEntries(
+  allTags.map((t) => [t, `/projects${toggleTag(t) ? `?tags=${toggleTag(t)}` : ""}`])
+);
+---
+
+<Base title="Projects" description="Projects by Bennett Woods">
+  <Fragment slot="header"><Header /></Fragment>
+
+  <h1 class="mb-6 text-3xl font-bold">Projects</h1>
+
+  <!-- Tag chips -->
+  <div class="mb-6 flex flex-wrap gap-2" aria-label="Filter by tags">
+    <!-- Clear / All -->
+    <a
+      href="/projects"
+      class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm
+             hover:bg-blue-50 focus:outline-none focus:ring
+             border-gray-300"
+      aria-pressed={selectedTags.length === 0}
+    >
+      All
+    </a>
+
+    {allTags.map((t) => (
+      <a
+        href={chipLinks[t]}
+        class={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm focus:outline-none focus:ring
+          ${selectedTags.includes(t)
+            ? "bg-blue-600 text-white border-blue-600"
+            : "border-gray-300 hover:bg-blue-50"}`}
+        aria-pressed={selectedTags.includes(t)}
+      >
+        {t}
+      </a>
+    ))}
+  </div>
+
+  {selectedTags.length > 0 && (
+    <p class="mb-4 text-sm text-gray-500">
+      Showing projects tagged with: <strong>{selectedTags.join(", ")}</strong>
+      — <a class="underline" href="/projects">clear</a>
+    </p>
+  )}
+
+  {visible.length === 0 ? (
+    <p class="mt-8 rounded-xl border border-dashed p-6 text-gray-500">
+      No projects match those tags. Try removing a filter.
+    </p>
+  ) : (
+    <div class="grid gap-6 md:grid-cols-2">
+      {visible.map((p) => (
+        <article class="group rounded-2xl border border-gray-200 p-5 transition hover:-translate-y-0.5 hover:shadow-lg">
+          <header class="mb-2 flex items-center justify-between gap-2">
+            <h3 class="text-lg font-semibold">
+              <a href={`/projects/${p.slug}`} class="hover:underline focus:outline-none focus:ring">
+                {p.title}
+              </a>
+            </h3>
+            <span class="rounded-full border border-gray-200 px-2 py-0.5 text-xs text-gray-500">{p.year}</span>
+          </header>
+          <p class="mb-3 text-sm text-gray-600">{p.description}</p>
+          <ul class="mb-4 flex flex-wrap gap-2" aria-label="Tags">
+            {p.tags?.map((t) => (
+                <li class={`rounded-full border px-2 py-0.5 text-xs ${colorFor(t)}`}>{t}</li>
+            ))}
+          </ul>
+          <div class="flex gap-3">
+            {p.repo && <a class="text-sm underline decoration-dotted hover:decoration-solid focus:outline-none focus:ring" href={p.repo}>Repo</a>}
+            {p.demo && <a class="text-sm underline decoration-dotted hover:decoration-solid focus:outline-none focus:ring" href={p.demo}>Live</a>}
+            <a class="text-sm underline decoration-dotted hover:decoration-solid focus:outline-none focus:ring" href={`/projects/${p.slug}`}>Read more</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  )}
+
+  <Fragment slot="footer"><Footer /></Fragment>
+</Base>
