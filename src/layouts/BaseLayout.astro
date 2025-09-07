@@ -5,6 +5,13 @@ const {
   description = "Portfolio of Bennett Woods",
   ogImage = "/social-card.png"
 } = Astro.props;
+
+// Build absolute URL for social images using configured `site`
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "";
+const ogAbs = ogImage.startsWith("http")
+  ? ogImage
+  : `${site}${ogImage}`;
+const pageTitle = `${title} • Bennett Woods`;
 ---
 
 <!DOCTYPE html>
@@ -12,47 +19,26 @@ const {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} • Bennett Woods</title>
+    <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <meta property="og:title" content={`${title} • Bennett Woods`} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
-    <meta name="color-scheme" content="light dark" />
+    <meta property="og:image" content={ogAbs} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogAbs} />
+
     <link rel="icon" href="/favicon.svg" />
-    <link rel="stylesheet" href="/Users/bennett/my-portfolio/src/styles/global.css">
-    <script defer data-domain="your-domain.com" src="https://plausible.io/js/script.js"></script>
+    <meta name="color-scheme" content="light dark" />
   </head>
   <body class="min-h-screen bg-neutral-950 text-gray-100 antialiased">
-    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:m-4 focus:rounded-lg focus:bg-brand/10 focus:px-3 focus:py-2">
-      Skip to content
-    </a>
-
-    <!-- Prevent theme flash -->
-    <script>
-      (function () {
-        const saved = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const dark = saved ? saved === 'dark' : prefersDark;
-        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-      })();
-    </script>
-
-    <!-- Light/Dark design tokens -->
-    <style>
-      :root {
-        --bg: 0 0% 100%;
-        --fg: 222 47% 11%;
-        --brand: 221 83% 53%;
-        --muted: 215 16% 47%;
-      }
-      :root[data-theme="dark"] {
-        --bg: 222 47% 11%;
-        --fg: 210 40% 98%;
-        --brand: 217 91% 60%;
-        --muted: 215 20% 65%;
-      }
-    </style>
-
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:m-4 focus:rounded-lg focus:bg-blue-600/20 focus:px-3 focus:py-2">Skip to content</a>
     <div class="mx-auto max-w-6xl px-4">
       <slot name="header" />
       <main id="main"><slot /></main>
