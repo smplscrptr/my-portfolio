@@ -1,0 +1,27 @@
+name: Build & Publish (Deploy Branch)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: deploy     # <-- built site branch
+          folder: dist       # <-- publish the built site
+          clean: true
