@@ -1,16 +1,31 @@
+---
+---
 <button
-id="theme-toggle"
-  class="rounded-xl border border-muted/30 px-3 py-2 text-sm hover:bg-brand/10 focus:outline-none focus:ring"
-  aria-label="Toggle theme"
+  id="theme-toggle"
+  type="button"
+  class="rounded-xl border border-gray-700/60 px-3 py-2 text-sm hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-950 transition"
+  aria-label="Toggle color theme"
 >
-    🌓 Theme
+  🌓 Theme
 </button>
+
 <script>
-    const btn = document.getElementById('theme-toggle');
-    btn?.addEventListener('click', () => {
-        const root = document.documentElement;
-        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-        root.dataset.theme = next;
-        try { localStorage.setItem('theme', next); } catch (_) {}
-    });
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+
+  // Initialize theme
+  const stored = localStorage.getItem('theme');
+  if (stored === 'dark' || stored === 'light') {
+    root.dataset.theme = stored;
+  } else if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+    root.dataset.theme = 'dark';
+  } else {
+    root.dataset.theme = 'light';
+  }
+
+  btn.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
 </script>

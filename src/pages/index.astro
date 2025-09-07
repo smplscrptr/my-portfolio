@@ -14,16 +14,6 @@ const featured: ProjectEntry[] = allProjects
   .sort(byOrder)
   .slice(0, 4);
 
-const tagColors: Record<string, string> = {
-  Python: "bg-emerald-500/15 text-emerald-300 border-emerald-700/40",
-  Tableau: "bg-indigo-500/15 text-indigo-300 border-indigo-700/40",
-  EDA: "bg-amber-500/15 text-amber-300 border-amber-700/40",
-  ARIMA: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-700/40",
-  "Time Series": "bg-cyan-500/15 text-cyan-300 border-cyan-700/40",
-  Pandas: "bg-sky-500/15 text-sky-300 border-sky-700/40"
-};
-const colorFor = (t: string) =>
-  tagColors[t] ?? "bg-slate-500/15 text-slate-300 border-slate-700/40";
 ---
 
 <Base title="Home" description="Portfolio of Bennett Woods — data analysis projects, skills, and contact.">
@@ -100,7 +90,7 @@ const colorFor = (t: string) =>
           <p class="mb-3 text-sm text-gray-300">{p.data.description}</p>
           <ul class="mb-4 flex flex-wrap gap-2" aria-label="Tags">
             {p.data.tags?.map((t) => (
-               <li class={'rounded-full border px-2 py-0.5 text-xs ${colorfor(t)}'}>{t}</li>
+               <li class={'rounded-full border px-2 py-0.5 text-xs'}>{t}</li>
             ))}
           </ul>
           <div class="flex gap-3">
