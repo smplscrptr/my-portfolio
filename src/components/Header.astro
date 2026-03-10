@@ -1,44 +1,86 @@
 ---
-import ThemeToggle from "./ThemeToggle.astro";
 ---
 
-<header class="py-6">
-  <div class="flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2 text-lg font-semibold hover:opacity-90 focus:outline-none focus:ring">
-      <img src="/favicon.svg" alt="" class="h-7 w-7" />
-      <span>Bennett Woods</span>
-    </a>
+<header class="sticky top-0 z-50 border-b border-zinc-800/60 backdrop-blur-md bg-zinc-950/85">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="flex h-16 items-center justify-between">
 
-    <!-- Desktop nav -->
-    <nav aria-label="Primary" class="hidden md:block">
-      <ul class="flex items-center gap-4">
-        <li><a class="rounded-lg px-2 py-1 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#home">Home</a></li>
-        <li><a class="rounded-lg px-2 py-1 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#skills">Skills</a></li>
-        <li><a class="rounded-lg px-2 py-1 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#projects">Projects</a></li>
-        <li><a class="rounded-lg px-2 py-1 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#contact">Contact</a></li>
-        <li><ThemeToggle /></li>
-      </ul>
-    </nav>
-
-    <!-- Mobile nav -->
-    <details class="md:hidden relative">
-      <summary
-        class="list-none rounded-xl border border-muted/30 px-3 py-2 text-sm hover:bg-brand/10 focus:outline-none focus:ring cursor-pointer"
-        aria-label="Open menu"
+      <!-- Logo -->
+      <a
+        href="/"
+        class="group flex items-center gap-2 focus-ring"
+        aria-label="Bennett Woods — home"
       >
-        ☰ Menu
-      </summary>
-      <div class="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-muted/20 bg-bg p-2 shadow-lg">
-        <nav aria-label="Primary mobile">
-          <ul class="flex flex-col gap-1">
-            <li><a class="block rounded-lg px-3 py-2 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#home">Home</a></li>
-            <li><a class="block rounded-lg px-3 py-2 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#skills">Skills</a></li>
-            <li><a class="block rounded-lg px-3 py-2 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#projects">Projects</a></li>
-            <li><a class="block rounded-lg px-3 py-2 hover:bg-blue-600/20 focus:outline-none focus:ring focus:ring-blue-500 focus:bg-blue-600/30" href="#contact">Contact</a></li>
-            <li class="px-3 py-2"><ThemeToggle /></li>
-          </ul>
-        </nav>
-      </div>
-    </details>
+        <span class="text-sm font-bold tracking-widest uppercase text-zinc-100 group-hover:text-violet-400 transition-colors duration-200">
+          Bennett Woods
+        </span>
+        <span class="h-1.5 w-1.5 rounded-full bg-violet-500 group-hover:scale-125 transition-transform duration-200" aria-hidden="true"></span>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav aria-label="Primary navigation" class="hidden md:block">
+        <ul class="flex items-center gap-1">
+          {[
+            { href: "#home",     label: "Home"     },
+            { href: "#skills",   label: "Skills"   },
+            { href: "#projects", label: "Projects" },
+            { href: "#contact",  label: "Contact"  },
+          ].map(({ href, label }) => (
+            <li>
+              <a
+                href={href}
+                class="rounded-lg px-3 py-1.5 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 focus-ring transition-colors duration-150"
+              >
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Mobile hamburger -->
+      <details class="md:hidden" id="mobile-nav">
+        <summary
+          class="list-none cursor-pointer rounded-lg border border-zinc-700/60 px-3 py-1.5 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 focus-ring transition-colors"
+          aria-label="Open navigation menu"
+        >
+          Menu
+        </summary>
+        <div class="absolute right-4 top-[4.5rem] z-50 w-44 rounded-xl border border-zinc-700/60 bg-zinc-900 p-2 shadow-2xl shadow-black/50">
+          <nav aria-label="Mobile navigation">
+            <ul class="flex flex-col gap-0.5">
+              {[
+                { href: "#home",     label: "Home"     },
+                { href: "#skills",   label: "Skills"   },
+                { href: "#projects", label: "Projects" },
+                { href: "#contact",  label: "Contact"  },
+              ].map(({ href, label }) => (
+                <li>
+                  <a
+                    href={href}
+                    class="block rounded-lg px-3 py-2 text-sm text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 focus-ring transition-colors"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </details>
+
+    </div>
   </div>
 </header>
+
+<script>
+  // Close mobile menu when a nav link is clicked
+  const details = document.getElementById('mobile-nav') as HTMLDetailsElement | null;
+  if (details) {
+    details.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        details.open = false;
+      });
+    });
+  }
+</script>

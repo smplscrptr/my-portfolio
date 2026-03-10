@@ -1,0 +1,103 @@
+---
+import Base from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+
+const tagColors: Record<string, string> = {
+  Python: "bg-emerald-500/15 text-emerald-300 border-emerald-700/40",
+  Tableau: "bg-indigo-500/15 text-indigo-300 border-indigo-700/40",
+  EDA: "bg-amber-500/15 text-amber-300 border-amber-700/40",
+  ARIMA: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-700/40",
+  "Time Series": "bg-cyan-500/15 text-cyan-300 border-cyan-700/40",
+  Pandas: "bg-sky-500/15 text-sky-300 border-sky-700/40",
+};
+const colorFor = (t: string) =>
+  tagColors[t] ?? "bg-violet-500/15 text-violet-300 border-violet-700/40";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const projects = await getCollection("projects");
+  return projects.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+};
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, description, year, tags, repo, demo } = entry.data;
+---
+
+<Base title={title} description={description}>
+  <Fragment slot="header"><Header /></Fragment>
+
+  <article class="py-16">
+    <!-- Back link -->
+    <a
+      href="/projects"
+      class="mb-8 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-violet-400 focus-ring transition-colors"
+    >
+      &larr; All Projects
+    </a>
+
+    <!-- Project header -->
+    <header class="mb-10">
+      <div class="mb-4 flex flex-wrap items-center gap-3">
+        <span class="rounded-full border border-zinc-700 px-3 py-0.5 text-sm text-zinc-400">
+          {year}
+        </span>
+        {tags?.map((t) => (
+          <span class={`rounded-full border px-2.5 py-0.5 text-xs ${colorFor(t)}`}>{t}</span>
+        ))}
+      </div>
+
+      <h1 class="mb-3 text-4xl font-black tracking-tight text-zinc-100 sm:text-5xl">
+        {title}
+      </h1>
+
+      <p class="text-lg text-zinc-400 max-w-2xl">{description}</p>
+
+      {(repo || demo) && (
+        <div class="mt-5 flex gap-4">
+          {repo && (
+            <a
+              href={repo}
+              class="rounded-xl border border-zinc-700 px-4 py-2 text-sm text-zinc-300 hover:border-violet-500/60 hover:text-violet-400 focus-ring transition-colors"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              View Repo &rarr;
+            </a>
+          )}
+          {demo && (
+            <a
+              href={demo}
+              class="rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500 focus-ring btn-primary"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Live Demo &rarr;
+            </a>
+          )}
+        </div>
+      )}
+    </header>
+
+    <!-- Divider -->
+    <div class="mb-10 h-px bg-gradient-to-r from-violet-500/40 via-indigo-500/20 to-transparent"></div>
+
+    <!-- Project content -->
+    <div class="prose prose-invert prose-zinc max-w-none
+      prose-headings:font-bold prose-headings:text-zinc-100
+      prose-p:text-zinc-300 prose-p:leading-relaxed
+      prose-a:text-violet-400 prose-a:no-underline hover:prose-a:underline
+      prose-strong:text-zinc-200
+      prose-code:text-violet-300 prose-code:bg-zinc-800 prose-code:rounded prose-code:px-1
+      prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800">
+      <Content />
+    </div>
+  </article>
+
+  <Fragment slot="footer"><Footer /></Fragment>
+</Base>

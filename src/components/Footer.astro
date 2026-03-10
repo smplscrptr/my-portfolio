@@ -1,3 +1,60 @@
-<footer class="mt-20 border-t border-muted/20 py-8 text-sm text-muted">
-  <p>&copy; {new Date().getFullYear()} Bennett Woods. Built with Astro + Tailwind.</p>
+---
+import { Github, Mail, Linkedin } from "@lucide/astro";
+---
+
+<footer class="border-t border-zinc-800/60 py-10 mt-16">
+  <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+
+    <p class="text-sm text-zinc-500">
+      &copy; {new Date().getFullYear()} Bennett Woods. Built with
+      <a
+        href="https://astro.build"
+        class="text-zinc-400 hover:text-violet-400 focus-ring transition-colors"
+        rel="noopener noreferrer"
+        target="_blank"
+      >Astro</a>
+      &amp;
+      <a
+        href="https://tailwindcss.com"
+        class="text-zinc-400 hover:text-violet-400 focus-ring transition-colors"
+        rel="noopener noreferrer"
+        target="_blank"
+      >Tailwind</a>.
+    </p>
+
+    <ul class="flex items-center gap-4" aria-label="Social links">
+      <li>
+        <a
+          href="mailto:hirebennettwoods@gmail.com"
+          class="text-zinc-500 hover:text-violet-400 focus-ring transition-colors"
+          aria-label="Email Bennett Woods"
+        >
+          <Mail size={18} aria-hidden="true" />
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://github.com/smplscrptr"
+          class="text-zinc-500 hover:text-violet-400 focus-ring transition-colors"
+          aria-label="GitHub profile"
+          rel="me noopener noreferrer"
+          target="_blank"
+        >
+          <Github size={18} aria-hidden="true" />
+        </a>
+      </li>
+      <li>
+        <a
+          href="https://www.linkedin.com/in/bennett-woods-173782179/"
+          class="text-zinc-500 hover:text-violet-400 focus-ring transition-colors"
+          aria-label="LinkedIn profile"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <Linkedin size={18} aria-hidden="true" />
+        </a>
+      </li>
+    </ul>
+
+  </div>
 </footer>

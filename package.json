@@ -12,6 +12,7 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
+    "@lucide/astro": "^0.577.0",
     "astro": "^5.13.4"
   },
   "devDependencies": {

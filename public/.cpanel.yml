@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    # Copy all built files to your domain's public root.
+    # If bennettwoods.dev is your PRIMARY domain, use: $HOME/public_html/
+    # If it's an ADDON domain, use the path cPanel shows for it, e.g.:
+    #   $HOME/public_html/bennettwoods.dev/
+    - export DEPLOYPATH=$HOME/public_html/
+    - /bin/cp -R * $DEPLOYPATH
