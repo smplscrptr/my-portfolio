@@ -2,51 +2,96 @@
 
 @source "./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}";
 
-.reveal {
-    opacity: 0;
-    transform: translateY(12px);
-}
-@media (prefers-reduced-motion: nopreference) {
-    .reveal.inview {
-        transition: opacity 500ms ease, transform 500ms ease;
-    }
-}
-.reveal.inview {
-    opacity: 1;
-    transform: none;
-}
-.hero-dots {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 400px;
-  aspect-ratio: 1/1;
-}
-.hero-dots span {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgb(59 130 246); /* blue-500 */
-  opacity: 0.6;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+/* ─── Design tokens ─────────────────────────────────────────── */
+:root {
+  --accent:     139 92 246;   /* violet-500 */
+  --accent-dim: 99  102 241;  /* indigo-500 */
 }
 
-.hero-dots span:hover{
-    transform: scale(1.8);
-    opacity: 1;
-    background: rgb(96 165 250);
-    
+/* ─── Reveal / scroll animations ────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes pulseDot {
-    0%, 100% { transform: scale(0.8); opacity: 0.5; }
-    50% { transform: scale(1.2); opacity: 1; }
+  .reveal.inview {
+    transition: opacity 600ms ease, transform 600ms ease;
+    transition-delay: calc(var(--stagger, 0) * 75ms);
   }
-  .hero-dots span {
-    animation: pulseDot 3s ease-in-out infinite;
+}
+
+.reveal.inview {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── Gradient text ──────────────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, rgb(167 139 250) 0%, rgb(99 102 241) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Section heading accent bar ────────────────────────────── */
+.section-heading::after {
+  content: '';
+  display: block;
+  margin-top: 0.5rem;
+  width: 2.5rem;
+  height: 3px;
+  background: linear-gradient(to right, rgb(var(--accent)), rgb(var(--accent-dim)));
+  border-radius: 9999px;
+}
+
+/* ─── Animated bar chart ─────────────────────────────────────── */
+@keyframes barGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+.chart-bar {
+  transform-origin: bottom;
+  animation: barGrow 0.75s ease-out forwards;
+  animation-play-state: paused;
+}
+
+.chart-bar.animate {
+  animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-bar {
+    animation: none;
+    transform: scaleY(1);
   }
-  .hero-dots span:nth-child(3n)   { animation-delay: .3s; }
-  .hero-dots span:nth-child(4n+2) { animation-delay: .6s; }
+}
+
+/* ─── Card hover glow ────────────────────────────────────────── */
+.card-hover {
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 24px rgb(var(--accent) / 0.12);
+  border-color: rgb(var(--accent) / 0.4);
+}
+
+/* ─── Primary button glow ────────────────────────────────────── */
+.btn-primary {
+  transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgb(var(--accent) / 0.45);
+}
+
+/* ─── Focus rings ────────────────────────────────────────────── */
+.focus-ring:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 3px;
+  border-radius: 6px;
 }
