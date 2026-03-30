@@ -1,0 +1,106 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import SubscribeForm from "../../components/SubscribeForm.astro";
+
+const allPosts = await getCollection("blog", ({ data }) =>
+  import.meta.env.DEV ? true : !data.draft
+);
+
+const posts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout
+  title="Blog"
+  description="Writing about data analytics, career, and the industry — by Bennett Woods."
+>
+  <Header slot="header" />
+
+  <section class="py-20">
+    <!-- Heading -->
+    <div class="reveal mb-10">
+      <h1 class="section-heading text-3xl font-bold tracking-tight text-zinc-100">Blog</h1>
+      <p class="mt-4 text-zinc-400">Writing about data, career, and the industry.</p>
+    </div>
+
+    <!-- Subscribe + RSS row -->
+    <div class="reveal mb-12 flex flex-col gap-4 sm:flex-row sm:items-start" style="--stagger:1">
+      <div class="flex-1">
+        <SubscribeForm />
+      </div>
+      <a
+        href="/rss.xml"
+        class="inline-flex items-center gap-2 self-start rounded-lg border border-zinc-700/60 px-4 py-2.5 text-sm text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 focus-ring transition-colors sm:mt-0 mt-0"
+        aria-label="RSS feed"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 11a9 9 0 0 1 9 9"/>
+          <path d="M4 4a16 16 0 0 1 16 16"/>
+          <circle cx="5" cy="19" r="1"/>
+        </svg>
+        RSS feed
+      </a>
+    </div>
+
+    <!-- Post grid -->
+    {posts.length === 0 ? (
+      <p class="text-zinc-500">No posts yet — check back soon.</p>
+    ) : (
+      <ul class="grid gap-6 sm:grid-cols-2">
+        {posts.map((post, idx) => {
+          const date = post.data.pubDate.toLocaleDateString("en-US", {
+            year: "numeric", month: "long", day: "numeric",
+          });
+          return (
+            <li
+              class="reveal card-hover rounded-xl border border-zinc-800 bg-zinc-900/60 p-6 flex flex-col gap-3"
+              style={`--stagger:${idx + 2}`}
+            >
+              <!-- Accent bar -->
+              <div class="h-0.5 w-10 rounded-full bg-gradient-to-r from-violet-500 to-indigo-500" aria-hidden="true"></div>
+
+              <div class="flex-1 flex flex-col gap-2">
+                <time class="text-xs text-zinc-500" datetime={post.data.pubDate.toISOString()}>{date}</time>
+                <h2 class="text-lg font-semibold text-zinc-100 leading-snug">{post.data.title}</h2>
+                <p class="text-sm text-zinc-400 leading-relaxed flex-1">{post.data.description}</p>
+
+                {post.data.tags.length > 0 && (
+                  <ul class="flex flex-wrap gap-1.5" aria-label="Tags">
+                    {post.data.tags.map((tag) => (
+                      <li class="rounded-md border border-zinc-700/60 bg-zinc-800/60 px-2 py-0.5 text-xs text-zinc-400">
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <a
+                href={`/blog/${post.slug}/`}
+                class="inline-flex items-center gap-1 text-sm font-medium text-violet-400 hover:text-violet-300 focus-ring transition-colors"
+              >
+                Read post
+                <span aria-hidden="true">→</span>
+                <span class="sr-only">: {post.data.title}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("inview")),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+</script>

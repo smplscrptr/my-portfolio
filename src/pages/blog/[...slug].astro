@@ -1,0 +1,99 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import SubscribeForm from "../../components/SubscribeForm.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) =>
+    import.meta.env.DEV ? true : !data.draft
+  );
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const date = post.data.pubDate.toLocaleDateString("en-US", {
+  year: "numeric", month: "long", day: "numeric",
+});
+
+// Rough reading time estimate
+const wordCount = post.body.split(/\s+/).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <Header slot="header" />
+
+  <article class="py-20">
+    <!-- Back link -->
+    <a
+      href="/blog"
+      class="mb-8 inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-100 focus-ring transition-colors"
+    >
+      <span aria-hidden="true">←</span> Blog
+    </a>
+
+    <!-- Post header -->
+    <header class="mb-8 reveal">
+      <h1 class="text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl leading-tight mb-4">
+        {post.data.title}
+      </h1>
+
+      <div class="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
+        <time datetime={post.data.pubDate.toISOString()}>{date}</time>
+        <span aria-hidden="true">·</span>
+        <span>{readingTime} min read</span>
+      </div>
+
+      {post.data.tags.length > 0 && (
+        <ul class="mt-4 flex flex-wrap gap-2" aria-label="Tags">
+          {post.data.tags.map((tag) => (
+            <li class="rounded-md border border-zinc-700/60 bg-zinc-800/60 px-2.5 py-1 text-xs text-zinc-400">
+              {tag}
+            </li>
+          ))}
+        </ul>
+      )}
+    </header>
+
+    <!-- Gradient divider -->
+    <div
+      class="mb-10 h-px w-full bg-gradient-to-r from-violet-500/40 via-indigo-500/20 to-transparent reveal"
+      style="--stagger:1"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Prose content -->
+    <div class="reveal prose prose-invert prose-zinc max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-violet-400 prose-a:no-underline hover:prose-a:text-violet-300 prose-code:text-violet-300 prose-code:bg-zinc-800 prose-code:rounded prose-code:px-1 prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-700/60" style="--stagger:2">
+      <Content />
+    </div>
+
+    <!-- Divider -->
+    <div
+      class="my-12 h-px w-full bg-gradient-to-r from-violet-500/30 via-indigo-500/15 to-transparent reveal"
+      style="--stagger:3"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Subscribe form -->
+    <div class="reveal max-w-xl" style="--stagger:4">
+      <SubscribeForm />
+    </div>
+  </article>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("inview")),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+</script>
