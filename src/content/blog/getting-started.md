@@ -6,9 +6,6 @@ tags: ["Career", "Data Analytics"]
 draft: false
 ---
 
-<!-- TODO: Replace this placeholder with your actual post content. -->
-<!-- Suggested outline below — delete and write freely. -->
-
 Starting out in data analytics, I expected the hard part to be the technical skills. And yes, SQL and Python matter — but the things that actually tripped me up were the ones no one put in a curriculum.
 
 ## The tool stack is never what you practiced

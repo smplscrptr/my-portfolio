@@ -7,4 +7,3 @@ repo: https://github.com/smplscrptr/portfolio-churn
 featured: true
 order: 1
 ---
-Short overview here. You can add sections, images, and links.  
